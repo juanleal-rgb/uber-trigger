@@ -34,6 +34,10 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
   const UBER_TARGET_SCALE = 0.2; // tweak if needed (smaller = less visually dominant)
   const uberTargetWidth = HAPPYROBOT_WIDTH * UBER_TARGET_SCALE;
   const uberTargetHeight = uberTargetWidth / UBER_ASPECT;
+  // IMPORTANT: MorphSVG uses the raw path coordinates (not the rendered SVG size).
+  // So we scale the *visible wrapper* during the morph to keep the Uber result proportional.
+  const UBER_VIEWBOX_WIDTH = 926.906;
+  const UBER_MORPH_SCALE = (HAPPYROBOT_WIDTH / UBER_VIEWBOX_WIDTH) * 0.9;
 
   useEffect(() => {
     if (
@@ -61,6 +65,7 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
       gsap.set(uberRef.current, { opacity: 0 });
       gsap.set(textRef.current, { y: 30, opacity: 0 });
       gsap.set(glowRef.current, { scale: 0, opacity: 0 });
+      gsap.set(happyrobotWrapperRef.current, { scale: 1, x: 0, y: 0 });
 
       tl
         // Fade in HappyRobot logo
@@ -91,6 +96,16 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
             ease: "power2.inOut",
           },
           "-=0.1",
+        )
+        // Scale wrapper down while morphing so Uber shape doesn't look gigantic
+        .to(
+          happyrobotWrapperRef.current,
+          {
+            scale: UBER_MORPH_SCALE,
+            duration: 1.2,
+            ease: "power2.inOut",
+          },
+          "-=1.2",
         )
         // Fade out second path during morph
         .to(
