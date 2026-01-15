@@ -25,6 +25,7 @@ export function LogoAnimationLoop({
   const happyrobotWrapperRef = useRef<HTMLDivElement>(null);
   const happyrobotRef = useRef<SVGSVGElement>(null);
   const uberRef = useRef<SVGSVGElement>(null);
+  const uberVisibleRef = useRef<SVGSVGElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,7 +54,10 @@ export function LogoAnimationLoop({
       // Initial state
       gsap.set(happyrobotRef.current, { opacity: 0.25 });
       gsap.set(happyrobotPaths[1], { opacity: 1 });
-      gsap.set(happyrobotWrapperRef.current, { x: 0 });
+      gsap.set(happyrobotWrapperRef.current, { x: 0, opacity: 1, scale: 1 });
+      if (uberVisibleRef.current) {
+        gsap.set(uberVisibleRef.current, { opacity: 0, scale: 0.98 });
+      }
       gsap.set(glowRef.current, { scale: 0, opacity: 0 });
 
       tl
@@ -72,7 +76,7 @@ export function LogoAnimationLoop({
           duration: 0.2,
           ease: "power2.out",
         })
-        // Morph HappyRobot to Uber (scaled down to match visual weight)
+        // Morph HappyRobot to Uber (first path) as a brief effect...
         .to(
           happyrobotPaths[0],
           {
@@ -84,6 +88,26 @@ export function LogoAnimationLoop({
             ease: "power2.inOut",
           },
           "-=0.1",
+        )
+        // ...then show the full Uber wordmark so it's not just the "U"
+        .to(
+          uberVisibleRef.current,
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.25,
+            ease: "power2.out",
+          },
+          "-=0.2",
+        )
+        .to(
+          happyrobotWrapperRef.current,
+          {
+            opacity: 0,
+            duration: 0.25,
+            ease: "power2.out",
+          },
+          "-=0.25",
         )
         // Shift wrapper to compensate for Uber offset
         .to(
@@ -118,6 +142,24 @@ export function LogoAnimationLoop({
         )
         // Hold Uber
         .to({}, { duration: 1.5 })
+        // Bring HappyRobot back before reversing morph (avoid showing only the "U")
+        .to(uberVisibleRef.current, {
+          opacity: 0,
+          scale: 0.98,
+          duration: 0.25,
+          ease: "power2.in",
+        })
+        .to(
+          happyrobotWrapperRef.current,
+          {
+            opacity: 1,
+            scale: 1,
+            x: 0,
+            duration: 0.25,
+            ease: "power2.out",
+          },
+          "-=0.25",
+        )
         // Glow for reverse
         .to(glowRef.current, {
           scale: 1.2,
@@ -185,15 +227,18 @@ export function LogoAnimationLoop({
   const happyrobotHeight = size;
   const happyrobotWidth = (size * 150) / 118;
   // Uber SVG viewBox is 926.906 × 321.777 (much wider than tall)
-  // We intentionally keep it a bit narrower than the HappyRobot visual to avoid "oversized" feel.
   const uberAspect = 926.906 / 321.777;
-  const uberWidth = happyrobotWidth * 0.2;
-  const uberHeight = uberWidth / uberAspect;
+  // Full wordmark size (what the user actually sees)
+  const uberDisplayWidth = happyrobotWidth * 1.35;
+  const uberDisplayHeight = uberDisplayWidth / uberAspect;
+  // Hidden morph target size (only used to read paths)
+  const uberTargetWidth = happyrobotWidth * 0.8;
+  const uberTargetHeight = uberTargetWidth / uberAspect;
 
   return (
     <div
       ref={containerRef}
-      className="flex items-center justify-center"
+      className="relative flex items-center justify-center"
       style={{ height: size * 1.5 }}
     >
       {/* Glow effect - hidden by default, shown during animation */}
@@ -216,13 +261,23 @@ export function LogoAnimationLoop({
         />
       </div>
 
-      {/* UNIR Logo - hidden, used as morph target */}
+      {/* Uber Logo - visible wordmark (shown after morph) */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <UberLogo
+          ref={uberVisibleRef}
+          className="overflow-visible opacity-0"
+          width={uberDisplayWidth}
+          height={uberDisplayHeight}
+        />
+      </div>
+
+      {/* Uber Logo - hidden, used as morph target */}
       <div className="invisible absolute">
         <UberLogo
           ref={uberRef}
           className="overflow-visible"
-          width={uberWidth}
-          height={uberHeight}
+          width={uberTargetWidth}
+          height={uberTargetHeight}
         />
       </div>
     </div>
