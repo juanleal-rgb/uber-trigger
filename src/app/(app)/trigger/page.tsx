@@ -502,11 +502,6 @@ Ismael`}
                         <p className="mt-0.5 text-sm text-fg-muted">
                           {call.telefono}
                         </p>
-                        {call.programa && (
-                          <p className="mt-1 truncate text-xs text-fg-disabled">
-                            {call.programa}
-                          </p>
-                        )}
                       </div>
                       <div className={cn("pill", config.class)}>
                         <StatusIcon
@@ -593,73 +588,7 @@ Ismael`}
               })()}
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <DetailField label="Programa" value={selectedCall.programa} />
-              <DetailField
-                label="Formacion Previa"
-                value={selectedCall.formacionPrevia}
-              />
-              <DetailField label="Pais" value={selectedCall.pais} />
-              <DetailField label="Edad" value={selectedCall.edad} />
-              <DetailField
-                label="Estudios Previos"
-                value={selectedCall.estudiosPrevios}
-              />
-              <DetailField label="Canal" value={selectedCall.canal} />
-              <DetailField
-                label="Motivacion"
-                value={selectedCall.motivacion}
-                fullWidth
-              />
-              <DetailField
-                label="Razon No Interes"
-                value={selectedCall.razonNoInteres}
-                fullWidth
-              />
-              {selectedCall.user && (
-                <DetailField
-                  label="Iniciada por"
-                  value={selectedCall.user.name || selectedCall.user.email}
-                />
-              )}
-              {selectedCall.runId && (
-                <div>
-                  <p className="text-xs font-medium text-fg-muted">Run ID</p>
-                  <p className="mt-1 font-mono text-sm text-fg-primary">
-                    {selectedCall.runId}
-                  </p>
-                  {isAdmin && HAPPYROBOT_ORG_SLUG && HAPPYROBOT_WORKFLOW_ID && (
-                    <a
-                      href={getHappyRobotRunUrl(selectedCall.runId)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="happyrobot-link mt-2 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white transition-all"
-                    >
-                      <Image
-                        src="/happyrobot/Footer-logo-white.svg"
-                        alt="HappyRobot"
-                        width={18}
-                        height={14}
-                      />
-                      Ver en HappyRobot
-                      <ExternalLink className="h-3.5 w-3.5 opacity-70" />
-                    </a>
-                  )}
-                </div>
-              )}
-              <DetailField
-                label="Creado"
-                value={new Date(selectedCall.createdAt).toLocaleString("es-ES")}
-              />
-              {selectedCall.completedAt && (
-                <DetailField
-                  label="Completado"
-                  value={new Date(selectedCall.completedAt).toLocaleString(
-                    "es-ES",
-                  )}
-                />
-              )}
-            </div>
+            {/* Keep the detail view minimal: only lead name + phone are shown above */}
 
             {selectedCall.errorMsg && (
               <div className="mt-6 rounded-lg border border-status-danger/20 bg-status-danger/10 p-4">

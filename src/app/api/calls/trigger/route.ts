@@ -32,13 +32,73 @@ export async function POST(req: NextRequest) {
     const userId = session.user?.id as string | undefined;
 
     // Require HappyRobot endpoint
-    const endpoint = process.env.HAPPYROBOT_ENDPOINT;
+    const endpoint =
+      process.env.HAPPYROBOT_ENDPOINT || process.env.HAPPYROBOT_WEBHOOK_URL;
     if (!endpoint || endpoint.trim() === "") {
       return NextResponse.json(
-        { error: "HappyRobot endpoint not configured" },
+        {
+          error: "HappyRobot endpoint not configured",
+          hint: "Set HAPPYROBOT_ENDPOINT (or HAPPYROBOT_WEBHOOK_URL) in your environment variables.",
+        },
         { status: 500 },
       );
     }
+    const apiKey = process.env.HAPPYROBOT_X_API_KEY;
+
+    const firstName = data.nombreAlumno.trim().split(" ")[0] || data.nombreAlumno.trim();
+
+    const emailThread = [
+      {
+        from: "Uber",
+        to: "User",
+        subject: "Corporate mobility for Milano–Cortina 2026",
+        body: `Good morning ${firstName},
+my name is Ismael and I look after Business Partnerships at Uber for Business.
+
+Ahead of the Milano–Cortina 2026 Olympic and Paralympic Games, where Uber is an Official Mobility Partner, many companies are evaluating how to best manage travel for their teams and guests during the event. How are you planning your company’s mobility for the Games?
+
+Our platform, completely free to use, enables you to:
+● centralize all trips (Uber and taxi) in one dashboard;
+● set policies and control spend in real time;
+● manage transfers and travel between Milan and event venues;
+● receive a single monthly invoice with VAT broken out, without advances or receipt management.
+
+It’s worth noting Uber for Business is not limited to the Games: it can also centralize corporate mobility for employees locally and internationally—before, during, and after the event—for day-to-day operations, business travel, meetings, and events.
+
+Do you have availability this week for a brief call?
+${firstName}, you can reply with times that work for you and I’ll send an invite.
+
+Best,
+Ismael`,
+      },
+      {
+        from: "Uber",
+        to: "User",
+        subject: "Re: Corporate mobility for Milano–Cortina 2026",
+        body: `Hi ${firstName},
+Did you get a chance to see my previous email? Would you be open to a quick call?`,
+      },
+      {
+        from: "User",
+        to: "Uber",
+        subject: "Re: Corporate mobility for Milano–Cortina 2026",
+        body: "Yes, I’m available in about one hour.",
+      },
+    ] as const;
+
+    const workflowContext = {
+      lead: {
+        first_name: firstName,
+        full_name: data.nombreAlumno.trim(),
+        phone_number: data.telefono.trim(),
+      },
+      email_thread: emailThread,
+      source: {
+        app: "uber-trigger",
+        call_id: undefined as string | undefined, // filled after call record creation
+        initiated_by_user_id: userId,
+      },
+    };
 
     // Create call record
     const call = await prisma.call.create({
@@ -55,9 +115,19 @@ export async function POST(req: NextRequest) {
         razonNoInteres: null,
         palanca: null,
         status: "PENDING",
+        metadata: {
+          lead: {
+            firstName,
+            fullName: data.nombreAlumno.trim(),
+            phoneNumber: data.telefono.trim(),
+          },
+          emailThread,
+        },
         userId: userId || null,
       },
     });
+
+    workflowContext.source.call_id = call.id;
 
     // Call HappyRobot webhook
     try {
@@ -65,13 +135,11 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(apiKey ? { "X-API-KEY": apiKey } : {}),
         },
         body: JSON.stringify({
-          phone_number: data.telefono,
-          metadata: {
-            callId: call.id,
-            nombreAlumno: data.nombreAlumno,
-          },
+          phone_number: data.telefono.trim(),
+          context: workflowContext,
         }),
       });
 
