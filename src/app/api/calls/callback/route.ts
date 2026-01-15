@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
     }
 
     const anyBody = body as any;
+    console.log("[HappyRobot Callback] received payload keys:", Object.keys(anyBody || {}));
 
     const callId =
       asString(anyBody?.context?.source?.call_id) ||
@@ -128,6 +129,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Call not found" }, { status: 404 });
     }
 
+    console.log("[HappyRobot Callback] updated call:", { id: updated.id, status: updated.status });
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("HappyRobot callback error:", error);

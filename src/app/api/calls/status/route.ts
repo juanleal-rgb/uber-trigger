@@ -70,6 +70,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const pollingSecret = process.env.HAPPYROBOT_POLLING_SECRET;
+    const orgId = process.env.HAPPYROBOT_ORG_ID;
+    const canPollHappyRobot = Boolean(pollingSecret && orgId);
+
     // Get recent calls (include completed) so the UI can show history + summaries.
     const calls = await prisma.call.findMany({
       include: {
@@ -84,6 +88,11 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
       take: 20,
     });
+
+    // If polling credentials aren't configured, just return DB state (callbacks can still mark calls completed).
+    if (!canPollHappyRobot) {
+      return NextResponse.json(calls);
+    }
 
     // Poll HappyRobot for RUNNING calls with runId
     console.log(
