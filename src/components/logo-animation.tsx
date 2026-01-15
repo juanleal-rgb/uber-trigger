@@ -37,7 +37,7 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
   // IMPORTANT: MorphSVG uses the raw path coordinates (not the rendered SVG size).
   // So we scale the *visible wrapper* during the morph to keep the Uber result proportional.
   const UBER_VIEWBOX_WIDTH = 926.906;
-  const UBER_MORPH_SCALE = (HAPPYROBOT_WIDTH / UBER_VIEWBOX_WIDTH) * 0.9;
+  const UBER_MORPH_SCALE = (HAPPYROBOT_WIDTH / UBER_VIEWBOX_WIDTH) * 0.2;
 
   useEffect(() => {
     if (
