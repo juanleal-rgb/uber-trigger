@@ -243,9 +243,6 @@ export default function TriggerPage() {
               <h1 className="text-xl font-semibold text-fg-primary">
                 Iniciar Llamada
               </h1>
-              <p className="mt-1 text-sm text-fg-muted">
-                Inicia una nueva llamada con los datos del alumno
-              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -257,30 +254,31 @@ export default function TriggerPage() {
 
                 <div className="space-y-4">
                   {/* EMAIL 1 */}
-                  <div className="rounded-xl border border-border-subtle bg-bg-elevated/40 p-4">
-                    <div className="mb-3 grid gap-1 text-[12px] text-fg-muted sm:grid-cols-3">
-                      <div>
-                        <span className="font-medium text-fg-secondary">
-                          From:
-                        </span>{" "}
-                        Uber
+                  <div className="flex justify-start">
+                    <div className="w-full max-w-[720px] rounded-xl border border-border-subtle bg-bg-elevated p-4">
+                      <div className="mb-3 grid gap-1 text-[12px] text-fg-muted sm:grid-cols-3">
+                        <div>
+                          <span className="font-medium text-fg-secondary">
+                            From:
+                          </span>{" "}
+                          Uber
+                        </div>
+                        <div>
+                          <span className="font-medium text-fg-secondary">
+                            To:
+                          </span>{" "}
+                          User
+                        </div>
+                        <div className="sm:text-right">
+                          <span className="font-medium text-fg-secondary">
+                            Subject:
+                          </span>{" "}
+                          Movilidad corporativa para Milano–Cortina 2026
+                        </div>
                       </div>
-                      <div>
-                        <span className="font-medium text-fg-secondary">
-                          To:
-                        </span>{" "}
-                        User
-                      </div>
-                      <div className="sm:text-right">
-                        <span className="font-medium text-fg-secondary">
-                          Subject:
-                        </span>{" "}
-                        Movilidad corporativa para Milano–Cortina 2026
-                      </div>
-                    </div>
 
-                    <div className="whitespace-pre-line text-[13px] leading-relaxed text-fg-primary">
-                      {`Buenos días ${firstName},
+                      <div className="whitespace-pre-line text-[13px] leading-relaxed text-fg-primary">
+                        {`Buenos días ${firstName},
 mi nombre es Ismael y me ocupo de Business Partnerships en Uber for Business.
 
 De cara a los Juegos Olímpicos y Paralímpicos Milano–Cortina 2026, de los que Uber es Official Mobility Partner, muchas empresas están evaluando cómo gestionar de la mejor manera los desplazamientos de sus equipos y de sus invitados durante el evento. ¿Cómo estáis planificando la movilidad de vuestra empresa para los Juegos?
@@ -298,63 +296,68 @@ ${firstName}, puedes responder directamente indicando los horarios que prefieras
 
 Un saludo,
 Ismael`}
+                      </div>
                     </div>
                   </div>
 
                   {/* EMAIL 2 */}
-                  <div className="rounded-xl border border-border-subtle bg-bg-elevated/20 p-4">
-                    <div className="mb-3 grid gap-1 text-[12px] text-fg-muted sm:grid-cols-3">
-                      <div>
-                        <span className="font-medium text-fg-secondary">
-                          From:
-                        </span>{" "}
-                        Uber
+                  <div className="flex justify-start">
+                    <div className="w-full max-w-[680px] rounded-xl border border-border-subtle bg-bg-elevated-alt p-4">
+                      <div className="mb-3 grid gap-1 text-[12px] text-fg-muted sm:grid-cols-3">
+                        <div>
+                          <span className="font-medium text-fg-secondary">
+                            From:
+                          </span>{" "}
+                          Uber
+                        </div>
+                        <div>
+                          <span className="font-medium text-fg-secondary">
+                            To:
+                          </span>{" "}
+                          User
+                        </div>
+                        <div className="sm:text-right">
+                          <span className="font-medium text-fg-secondary">
+                            Subject:
+                          </span>{" "}
+                          Re: Movilidad corporativa para Milano–Cortina 2026
+                        </div>
                       </div>
-                      <div>
-                        <span className="font-medium text-fg-secondary">
-                          To:
-                        </span>{" "}
-                        User
-                      </div>
-                      <div className="sm:text-right">
-                        <span className="font-medium text-fg-secondary">
-                          Subject:
-                        </span>{" "}
-                        Re: Movilidad corporativa para Milano–Cortina 2026
-                      </div>
-                    </div>
 
-                    <div className="whitespace-pre-line text-[13px] leading-relaxed text-fg-primary">
-                      {`Hola ${firstName},
+                      <div className="whitespace-pre-line text-[13px] leading-relaxed text-fg-primary">
+                        {`Hola ${firstName},
 ¿Pudiste ver mi correo anterior? ¿Te gustaría tener una llamada?`}
+                      </div>
                     </div>
                   </div>
 
                   {/* EMAIL 3 */}
-                  <div className="rounded-xl border border-border-subtle bg-bg-elevated/10 p-4">
-                    <div className="mb-3 grid gap-1 text-[12px] text-fg-muted sm:grid-cols-3">
-                      <div>
-                        <span className="font-medium text-fg-secondary">
-                          From:
-                        </span>{" "}
-                        User
+                  <div className="flex justify-end">
+                    <div className="w-full max-w-[520px] rounded-xl border border-border-subtle bg-interactive-hover p-4">
+                      <div className="mb-3 grid gap-1 text-[12px] text-fg-muted sm:grid-cols-3">
+                        <div>
+                          <span className="font-medium text-fg-secondary">
+                            From:
+                          </span>{" "}
+                          User
+                        </div>
+                        <div>
+                          <span className="font-medium text-fg-secondary">
+                            To:
+                          </span>{" "}
+                          Uber
+                        </div>
+                        <div className="sm:text-right">
+                          <span className="font-medium text-fg-secondary">
+                            Subject:
+                          </span>{" "}
+                          Re: Movilidad corporativa para Milano–Cortina 2026
+                        </div>
                       </div>
-                      <div>
-                        <span className="font-medium text-fg-secondary">
-                          To:
-                        </span>{" "}
-                        Uber
-                      </div>
-                      <div className="sm:text-right">
-                        <span className="font-medium text-fg-secondary">
-                          Subject:
-                        </span>{" "}
-                        Re: Movilidad corporativa para Milano–Cortina 2026
-                      </div>
-                    </div>
 
-                    <div className="whitespace-pre-line text-[13px] leading-relaxed text-fg-primary">
-                      {"Si, en una hora aproximadamente estoy disponible"}
+                      <div className="whitespace-pre-line text-[13px] leading-relaxed text-fg-primary">
+                        {"Si, en una hora aproximadamente estoy disponible"}
+                      </div>
                     </div>
                   </div>
                 </div>
