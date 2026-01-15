@@ -37,9 +37,9 @@ export function LogoAnimationLoop({
 
     // Get path elements from the SVGs
     const happyrobotPaths = happyrobotRef.current.querySelectorAll("path");
-    const unirPaths = uberRef.current.querySelectorAll("path");
+    const uberPaths = uberRef.current.querySelectorAll("path");
 
-    if (happyrobotPaths.length === 0 || unirPaths.length === 0) return;
+    if (happyrobotPaths.length === 0 || uberPaths.length === 0) return;
 
     // Store original path data for reverse morph
     const originalPath0 = happyrobotPaths[0].getAttribute("d");
@@ -72,12 +72,12 @@ export function LogoAnimationLoop({
           duration: 0.2,
           ease: "power2.out",
         })
-        // Morph HappyRobot to UNIR
+        // Morph HappyRobot to Uber (scaled down to match visual weight)
         .to(
           happyrobotPaths[0],
           {
             morphSVG: {
-              shape: unirPaths[0],
+              shape: uberPaths[0],
               shapeIndex: "auto",
             },
             duration: 1,
@@ -85,11 +85,11 @@ export function LogoAnimationLoop({
           },
           "-=0.1",
         )
-        // Shift wrapper to compensate for UNIR offset
+        // Shift wrapper to compensate for Uber offset
         .to(
           happyrobotWrapperRef.current,
           {
-            x: -12,
+            x: -6,
             duration: 1,
             ease: "power2.inOut",
           },
@@ -116,7 +116,7 @@ export function LogoAnimationLoop({
           },
           "-=0.6",
         )
-        // Hold UNIR
+        // Hold Uber
         .to({}, { duration: 1.5 })
         // Glow for reverse
         .to(glowRef.current, {
@@ -125,7 +125,7 @@ export function LogoAnimationLoop({
           duration: 0.2,
           ease: "power2.out",
         })
-        // Morph UNIR back to HappyRobot
+        // Morph Uber back to HappyRobot
         .to(
           happyrobotPaths[0],
           {
@@ -184,8 +184,11 @@ export function LogoAnimationLoop({
   // Calculate proportional sizes
   const happyrobotHeight = size;
   const happyrobotWidth = (size * 150) / 118;
-  const unirHeight = size * 1.2;
-  const unirWidth = (unirHeight * 300) / 141;
+  // Uber SVG viewBox is 926.906 × 321.777 (much wider than tall)
+  // We intentionally keep it a bit narrower than the HappyRobot visual to avoid "oversized" feel.
+  const uberAspect = 926.906 / 321.777;
+  const uberWidth = happyrobotWidth * 1.25;
+  const uberHeight = uberWidth / uberAspect;
 
   return (
     <div
@@ -218,8 +221,8 @@ export function LogoAnimationLoop({
         <UberLogo
           ref={uberRef}
           className="overflow-visible"
-          width={unirWidth}
-          height={unirHeight}
+          width={uberWidth}
+          height={uberHeight}
         />
       </div>
     </div>
