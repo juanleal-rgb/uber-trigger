@@ -245,7 +245,7 @@ export function NavRail() {
 
           {/* Tooltip */}
           <span className="absolute left-full ml-2 hidden rounded bg-bg-elevated px-2 py-1 text-caption text-fg-primary shadow-lg group-hover:block">
-            Usuario UNIR
+            Usuario Uber
           </span>
         </div>
       </div>

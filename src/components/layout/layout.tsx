@@ -315,7 +315,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     ? "/uber/Uber_logo_2018.svg"
                     : "/uber/Uber_logo_2018_white.svg"
                 }
-                alt="UNIR"
+                alt="Uber"
                 width={32}
                 height={32}
                 className="object-contain"
@@ -335,7 +335,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     ? "/uber/Uber_logo_2018.svg"
                     : "/uber/Uber_logo_2018_white.svg"
                 }
-                alt="UNIR La Universidad en Internet"
+                alt="Uber"
                 width={120}
                 height={32}
                 className="object-contain"

@@ -31,7 +31,7 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
   const HAPPYROBOT_WIDTH = 150;
   const HAPPYROBOT_HEIGHT = 118;
   const UBER_ASPECT = 926.906 / 321.777;
-  const UBER_TARGET_SCALE = 0.5; // tweak if needed (smaller = less visually dominant)
+  const UBER_TARGET_SCALE = 0.2; // tweak if needed (smaller = less visually dominant)
   const uberTargetWidth = HAPPYROBOT_WIDTH * UBER_TARGET_SCALE;
   const uberTargetHeight = uberTargetWidth / UBER_ASPECT;
 
@@ -173,7 +173,7 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
         ref={textRef}
         className="absolute left-1/2 top-1/2 mt-24 -translate-x-1/2 text-center text-sm tracking-widest text-white/60"
       >
-        HAPPYROBOT × UNIR
+        HAPPYROBOT × UBER
       </div>
     </div>
   );
