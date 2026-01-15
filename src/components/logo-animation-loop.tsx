@@ -2,15 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 
 // Import SVGs as React components (SVGR)
 import HappyRobotLogo from "@public/happyrobot/Footer-logo-white.svg";
 import UberLogo from "@public/uber/Uber_logo_2018_white.svg";
-// Register plugin
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(MorphSVGPlugin);
-}
 
 interface LogoAnimationLoopProps {
   size?: number;
@@ -24,26 +19,15 @@ export function LogoAnimationLoop({
   const containerRef = useRef<HTMLDivElement>(null);
   const happyrobotWrapperRef = useRef<HTMLDivElement>(null);
   const happyrobotRef = useRef<SVGSVGElement>(null);
-  const uberRef = useRef<SVGSVGElement>(null);
   const uberVisibleRef = useRef<SVGSVGElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (
       !happyrobotRef.current ||
-      !uberRef.current ||
       !happyrobotWrapperRef.current
     )
       return;
-
-    // Get path elements from the SVGs
-    const happyrobotPaths = happyrobotRef.current.querySelectorAll("path");
-    const uberPaths = uberRef.current.querySelectorAll("path");
-
-    if (happyrobotPaths.length === 0 || uberPaths.length === 0) return;
-
-    // Store original path data for reverse morph
-    const originalPath0 = happyrobotPaths[0].getAttribute("d");
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -53,7 +37,6 @@ export function LogoAnimationLoop({
 
       // Initial state
       gsap.set(happyrobotRef.current, { opacity: 0.25 });
-      gsap.set(happyrobotPaths[1], { opacity: 1 });
       gsap.set(happyrobotWrapperRef.current, { x: 0, opacity: 1, scale: 1 });
       if (uberVisibleRef.current) {
         gsap.set(uberVisibleRef.current, { opacity: 0, scale: 0.98 });
@@ -76,20 +59,7 @@ export function LogoAnimationLoop({
           duration: 0.2,
           ease: "power2.out",
         })
-        // Morph HappyRobot to Uber (first path) as a brief effect...
-        .to(
-          happyrobotPaths[0],
-          {
-            morphSVG: {
-              shape: uberPaths[0],
-              shapeIndex: "auto",
-            },
-            duration: 1,
-            ease: "power2.inOut",
-          },
-          "-=0.1",
-        )
-        // ...then show the full Uber wordmark so it's not just the "U"
+        // Crossfade to the full Uber wordmark
         .to(
           uberVisibleRef.current,
           {
@@ -109,26 +79,6 @@ export function LogoAnimationLoop({
           },
           "-=0.25",
         )
-        // Shift wrapper to compensate for Uber offset
-        .to(
-          happyrobotWrapperRef.current,
-          {
-            x: -6,
-            duration: 1,
-            ease: "power2.inOut",
-          },
-          "-=1",
-        )
-        // Fade out second path during morph
-        .to(
-          happyrobotPaths[1],
-          {
-            opacity: 0,
-            duration: 0.5,
-            ease: "power2.in",
-          },
-          "-=0.9",
-        )
         // Fade out glow
         .to(
           glowRef.current,
@@ -142,7 +92,7 @@ export function LogoAnimationLoop({
         )
         // Hold Uber
         .to({}, { duration: 1.5 })
-        // Bring HappyRobot back before reversing morph (avoid showing only the "U")
+        // Bring HappyRobot back
         .to(uberVisibleRef.current, {
           opacity: 0,
           scale: 0.98,
@@ -159,57 +109,6 @@ export function LogoAnimationLoop({
             ease: "power2.out",
           },
           "-=0.25",
-        )
-        // Glow for reverse
-        .to(glowRef.current, {
-          scale: 1.2,
-          opacity: 0.6,
-          duration: 0.2,
-          ease: "power2.out",
-        })
-        // Morph Uber back to HappyRobot
-        .to(
-          happyrobotPaths[0],
-          {
-            morphSVG: {
-              shape: originalPath0!,
-              shapeIndex: "auto",
-            },
-            duration: 1,
-            ease: "power2.inOut",
-          },
-          "-=0.1",
-        )
-        // Shift wrapper back to center
-        .to(
-          happyrobotWrapperRef.current,
-          {
-            x: 0,
-            duration: 1,
-            ease: "power2.inOut",
-          },
-          "-=1",
-        )
-        // Fade in second path
-        .to(
-          happyrobotPaths[1],
-          {
-            opacity: 1,
-            duration: 0.5,
-            ease: "power2.out",
-          },
-          "-=0.5",
-        )
-        // Fade out glow
-        .to(
-          glowRef.current,
-          {
-            scale: 1.5,
-            opacity: 0,
-            duration: 0.4,
-            ease: "power2.out",
-          },
-          "-=0.6",
         )
         // Hold HappyRobot then fade to idle
         .to({}, { duration: 0.5 })
@@ -231,9 +130,6 @@ export function LogoAnimationLoop({
   // Full wordmark size (what the user actually sees)
   const uberDisplayWidth = happyrobotWidth * 1.35;
   const uberDisplayHeight = uberDisplayWidth / uberAspect;
-  // Hidden morph target size (only used to read paths)
-  const uberTargetWidth = happyrobotWidth * 0.8;
-  const uberTargetHeight = uberTargetWidth / uberAspect;
 
   return (
     <div
@@ -268,16 +164,6 @@ export function LogoAnimationLoop({
           className="overflow-visible opacity-0"
           width={uberDisplayWidth}
           height={uberDisplayHeight}
-        />
-      </div>
-
-      {/* Uber Logo - hidden, used as morph target */}
-      <div className="invisible absolute">
-        <UberLogo
-          ref={uberRef}
-          className="overflow-visible"
-          width={uberTargetWidth}
-          height={uberTargetHeight}
         />
       </div>
     </div>
