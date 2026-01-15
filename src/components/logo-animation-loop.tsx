@@ -51,7 +51,7 @@ export function LogoAnimationLoop({
         // Fade in HappyRobot logo
         .to(happyrobotRef.current, {
           opacity: 1,
-          duration: 0.45,
+          duration: 0.35,
           ease: "power2.out",
         })
         // Pause to show HappyRobot
