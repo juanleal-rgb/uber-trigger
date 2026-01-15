@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String?
+  passwordHash String   @map("password_hash")
+  role         String   @default("user")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  calls        Call[]
+
+  @@map("users")
+}
+
+enum CallStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELED
+}
+
+model Call {
+  id               String     @id @default(uuid())
+  runId            String?    @unique @map("run_id")
+  nombreAlumno     String     @map("nombre_alumno")
+  telefono         String
+  programa         String?
+  formacionPrevia  String?    @map("formacion_previa")
+  pais             String?
+  edad             String?
+  estudiosPrevios  String?    @map("estudios_previos")
+  motivacion       String?
+  canal            String?
+  razonNoInteres   String?    @map("razon_no_interes")
+  palanca          String?
+  status           CallStatus @default(PENDING)
+  metadata         Json?
+  errorMsg         String?    @map("error_msg")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+  completedAt      DateTime?  @map("completed_at")
+  userId           String?    @map("user_id")
+  user             User?      @relation(fields: [userId], references: [id])
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId])
+  @@map("calls")
+}

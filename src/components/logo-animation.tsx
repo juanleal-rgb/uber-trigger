@@ -1,0 +1,182 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
+
+// Import SVGs as React components (SVGR)
+import HappyRobotLogo from "@public/happyrobot/Footer-logo-white.svg";
+import UnirLogo from "@public/unir/logo-white.svg";
+
+// Register plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(MorphSVGPlugin);
+}
+
+interface LogoAnimationProps {
+  onComplete?: () => void;
+}
+
+export function LogoAnimation({ onComplete }: LogoAnimationProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const happyrobotWrapperRef = useRef<HTMLDivElement>(null);
+  const happyrobotRef = useRef<SVGSVGElement>(null);
+  const unirRef = useRef<SVGSVGElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (
+      !happyrobotRef.current ||
+      !unirRef.current ||
+      !happyrobotWrapperRef.current
+    )
+      return;
+
+    // Get path elements from the SVGs
+    const happyrobotPaths = happyrobotRef.current.querySelectorAll("path");
+    const unirPaths = unirRef.current.querySelectorAll("path");
+
+    if (happyrobotPaths.length === 0 || unirPaths.length === 0) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setTimeout(() => onComplete?.(), 800);
+        },
+      });
+
+      // Initial state
+      gsap.set(happyrobotRef.current, { opacity: 0, scale: 0.8 });
+      gsap.set(unirRef.current, { opacity: 0 });
+      gsap.set(textRef.current, { y: 30, opacity: 0 });
+      gsap.set(glowRef.current, { scale: 0, opacity: 0 });
+
+      tl
+        // Fade in HappyRobot logo
+        .to(happyrobotRef.current, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+        })
+        // Pause to show HappyRobot
+        .to({}, { duration: 0.4 })
+        // Glow pulse
+        .to(glowRef.current, {
+          scale: 1.2,
+          opacity: 0.8,
+          duration: 0.3,
+          ease: "power2.out",
+        })
+        // Morph first HappyRobot path to first UNIR path + shift container left to compensate for coordinate change
+        .to(
+          happyrobotPaths[0],
+          {
+            morphSVG: {
+              shape: unirPaths[0],
+              shapeIndex: "auto",
+            },
+            duration: 1.2,
+            ease: "power2.inOut",
+          },
+          "-=0.1",
+        )
+        // Simultaneously shift the wrapper to compensate for UNIR's path offset
+        // After morph, "uniR" visual center is ~120px from SVG left, SVG center is 75px
+        // Need to shift left by ~45px to center the morphed result
+        .to(
+          happyrobotWrapperRef.current,
+          {
+            x: -45,
+            duration: 1.2,
+            ease: "power2.inOut",
+          },
+          "-=1.2",
+        )
+        // Fade out second path during morph
+        .to(
+          happyrobotPaths[1],
+          {
+            opacity: 0,
+            scale: 0.5,
+            duration: 0.6,
+            ease: "power2.in",
+          },
+          "-=1.1",
+        )
+        // Fade out glow
+        .to(
+          glowRef.current,
+          {
+            scale: 2,
+            opacity: 0,
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "-=0.8",
+        )
+        // Show combined text
+        .to(
+          textRef.current,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "-=0.3",
+        );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [onComplete]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-50 overflow-visible bg-black"
+    >
+      {/* Glow effect - absolutely centered */}
+      <div
+        ref={glowRef}
+        className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/30 blur-3xl"
+      />
+
+      {/* HappyRobot Logo - visible, will morph */}
+      <div
+        ref={happyrobotWrapperRef}
+        className="absolute left-1/2 top-1/2"
+        style={{ transform: "translate(-50%, -50%)" }}
+      >
+        <HappyRobotLogo
+          ref={happyrobotRef}
+          className="overflow-visible"
+          width={150}
+          height={118}
+        />
+      </div>
+
+      {/* UNIR Logo - hidden, used as morph target */}
+      <div
+        className="absolute left-1/2 top-1/2"
+        style={{ transform: "translate(-50%, -50%)", visibility: "hidden" }}
+      >
+        <UnirLogo
+          ref={unirRef}
+          className="overflow-visible"
+          width={300}
+          height={141}
+        />
+      </div>
+
+      {/* Text - absolutely centered below logo */}
+      <div
+        ref={textRef}
+        className="absolute left-1/2 top-1/2 mt-24 -translate-x-1/2 text-center text-sm tracking-widest text-white/60"
+      >
+        HAPPYROBOT × UNIR
+      </div>
+    </div>
+  );
+}
