@@ -101,7 +101,7 @@ export default function TriggerPage() {
         nombreAlumno: firstName,
       }));
     }
-  }, [session?.user?.name]);
+  }, [session?.user?.name, formData.nombreAlumno]);
 
   // ESC key to close modal
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { CallStatus } from "@prisma/client";
+import { CallStatus, Prisma } from "@prisma/client";
 
 function normalizeStatus(status: unknown): CallStatus | null {
   if (typeof status !== "string") return null;
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
           ...(runId && !existing.runId ? { runId } : {}),
           ...(status ? { status } : {}),
           ...(terminalStatus ? { completedAt: now } : {}),
-          metadata: mergedMetadata,
+          metadata: mergedMetadata as unknown as Prisma.InputJsonValue,
         },
       });
     });
