@@ -36,10 +36,14 @@ export function LogoAnimationLoop({
       });
 
       // Initial state
-      gsap.set(happyrobotRef.current, { opacity: 0.25 });
+      gsap.set(happyrobotRef.current, { opacity: 0.25, filter: "blur(0px)" });
       gsap.set(happyrobotWrapperRef.current, { x: 0, opacity: 1, scale: 1 });
       if (uberVisibleRef.current) {
-        gsap.set(uberVisibleRef.current, { opacity: 0, scale: 0.98 });
+        gsap.set(uberVisibleRef.current, {
+          opacity: 0,
+          scale: 0.98,
+          filter: "blur(8px)",
+        });
       }
       gsap.set(glowRef.current, { scale: 0, opacity: 0 });
 
@@ -47,17 +51,17 @@ export function LogoAnimationLoop({
         // Fade in HappyRobot logo
         .to(happyrobotRef.current, {
           opacity: 1,
-          duration: 0.4,
+          duration: 0.45,
           ease: "power2.out",
         })
         // Pause to show HappyRobot
-        .to({}, { duration: 0.3 })
+        .to({}, { duration: 0.25 })
         // Glow pulse
         .to(glowRef.current, {
           scale: 1.2,
           opacity: 0.6,
-          duration: 0.2,
-          ease: "power2.out",
+          duration: 0.3,
+          ease: "power2.inOut",
         })
         // Crossfade to the full Uber wordmark
         .to(
@@ -65,8 +69,9 @@ export function LogoAnimationLoop({
           {
             opacity: 1,
             scale: 1,
-            duration: 0.25,
-            ease: "power2.out",
+            filter: "blur(0px)",
+            duration: 0.55,
+            ease: "power2.inOut",
           },
           "-=0.2",
         )
@@ -74,8 +79,8 @@ export function LogoAnimationLoop({
           happyrobotWrapperRef.current,
           {
             opacity: 0,
-            duration: 0.25,
-            ease: "power2.out",
+            duration: 0.55,
+            ease: "power2.inOut",
           },
           "-=0.25",
         )
@@ -85,8 +90,8 @@ export function LogoAnimationLoop({
           {
             scale: 1.5,
             opacity: 0,
-            duration: 0.4,
-            ease: "power2.out",
+            duration: 0.55,
+            ease: "power2.inOut",
           },
           "-=0.6",
         )
@@ -96,8 +101,9 @@ export function LogoAnimationLoop({
         .to(uberVisibleRef.current, {
           opacity: 0,
           scale: 0.98,
-          duration: 0.25,
-          ease: "power2.in",
+          filter: "blur(8px)",
+          duration: 0.45,
+          ease: "power2.inOut",
         })
         .to(
           happyrobotWrapperRef.current,
@@ -105,8 +111,8 @@ export function LogoAnimationLoop({
             opacity: 1,
             scale: 1,
             x: 0,
-            duration: 0.25,
-            ease: "power2.out",
+            duration: 0.45,
+            ease: "power2.inOut",
           },
           "-=0.25",
         )

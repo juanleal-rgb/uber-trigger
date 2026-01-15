@@ -45,9 +45,17 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
       });
 
       // Initial state
-      gsap.set(happyrobotRef.current, { opacity: 0, scale: 0.8 });
+      gsap.set(happyrobotRef.current, {
+        opacity: 0,
+        scale: 0.94,
+        filter: "blur(6px)",
+      });
       if (uberVisibleRef.current) {
-        gsap.set(uberVisibleRef.current, { opacity: 0, scale: 0.98 });
+        gsap.set(uberVisibleRef.current, {
+          opacity: 0,
+          scale: 0.98,
+          filter: "blur(8px)",
+        });
       }
       gsap.set(textRef.current, { y: 30, opacity: 0 });
       gsap.set(glowRef.current, { scale: 0, opacity: 0 });
@@ -58,17 +66,18 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
         .to(happyrobotRef.current, {
           opacity: 1,
           scale: 1,
-          duration: 0.6,
-          ease: "back.out(1.7)",
+          filter: "blur(0px)",
+          duration: 0.55,
+          ease: "power2.out",
         })
         // Pause to show HappyRobot
-        .to({}, { duration: 0.4 })
+        .to({}, { duration: 0.25 })
         // Glow pulse
         .to(glowRef.current, {
-          scale: 1.2,
-          opacity: 0.8,
-          duration: 0.3,
-          ease: "power2.out",
+          scale: 1.15,
+          opacity: 0.7,
+          duration: 0.45,
+          ease: "power2.inOut",
         })
         // Crossfade to full Uber logo (wordmark)
         .to(
@@ -76,19 +85,20 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
           {
             opacity: 1,
             scale: 1,
-            duration: 0.35,
-            ease: "power2.out",
+            filter: "blur(0px)",
+            duration: 0.6,
+            ease: "power2.inOut",
           },
-          "-=0.05",
+          "-=0.25",
         )
         .to(
           happyrobotWrapperRef.current,
           {
             opacity: 0,
-            duration: 0.35,
-            ease: "power2.out",
+            duration: 0.6,
+            ease: "power2.inOut",
           },
-          "-=0.35",
+          "-=0.6",
         )
         // Fade out glow
         .to(
@@ -96,8 +106,8 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
           {
             scale: 2,
             opacity: 0,
-            duration: 0.5,
-            ease: "power2.out",
+            duration: 0.6,
+            ease: "power2.inOut",
           },
           "-=0.8",
         )
@@ -107,7 +117,7 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
           {
             y: 0,
             opacity: 1,
-            duration: 0.5,
+            duration: 0.55,
             ease: "power2.out",
           },
           "-=0.3",
