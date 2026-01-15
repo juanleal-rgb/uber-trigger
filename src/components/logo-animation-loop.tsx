@@ -6,8 +6,7 @@ import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 
 // Import SVGs as React components (SVGR)
 import HappyRobotLogo from "@public/happyrobot/Footer-logo-white.svg";
-import UnirLogo from "@public/unir/logo-white.svg";
-
+import UberLogo from "@public/uber/Uber_logo_2018_white.svg";
 // Register plugin
 if (typeof window !== "undefined") {
   gsap.registerPlugin(MorphSVGPlugin);
@@ -25,20 +24,20 @@ export function LogoAnimationLoop({
   const containerRef = useRef<HTMLDivElement>(null);
   const happyrobotWrapperRef = useRef<HTMLDivElement>(null);
   const happyrobotRef = useRef<SVGSVGElement>(null);
-  const unirRef = useRef<SVGSVGElement>(null);
+  const uberRef = useRef<SVGSVGElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (
       !happyrobotRef.current ||
-      !unirRef.current ||
+      !uberRef.current ||
       !happyrobotWrapperRef.current
     )
       return;
 
     // Get path elements from the SVGs
     const happyrobotPaths = happyrobotRef.current.querySelectorAll("path");
-    const unirPaths = unirRef.current.querySelectorAll("path");
+    const unirPaths = uberRef.current.querySelectorAll("path");
 
     if (happyrobotPaths.length === 0 || unirPaths.length === 0) return;
 
@@ -216,8 +215,8 @@ export function LogoAnimationLoop({
 
       {/* UNIR Logo - hidden, used as morph target */}
       <div className="invisible absolute">
-        <UnirLogo
-          ref={unirRef}
+        <UberLogo
+          ref={uberRef}
           className="overflow-visible"
           width={unirWidth}
           height={unirHeight}

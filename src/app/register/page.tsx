@@ -235,8 +235,8 @@ export default function RegisterPage() {
         {/* Logo */}
         <div ref={logoRef} className="mb-8 flex flex-col items-center">
           <Image
-            src="/unir/logo-white.svg"
-            alt="UNIR"
+            src="/uber/Uber_logo_2018_white.svg"
+            alt="Uber"
             width={160}
             height={53}
             priority

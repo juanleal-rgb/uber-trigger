@@ -16,10 +16,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "UNIR Call Trigger - Sales Console",
-  description: "AI-powered university sales & admissions call trigger system",
+  title: "UBER Call Trigger - Sistema de Llamadas",
+  description: "Sistema de Llamadas para la venta de productos de UBER",
   icons: {
-    icon: "/unir/favicon.ico",
+    icon: "/uber/Uber_logo_2018_white.svg",
   },
 };
 

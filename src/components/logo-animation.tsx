@@ -6,7 +6,7 @@ import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 
 // Import SVGs as React components (SVGR)
 import HappyRobotLogo from "@public/happyrobot/Footer-logo-white.svg";
-import UnirLogo from "@public/unir/logo-white.svg";
+import UberLogo from "@public/uber/Uber_logo_2018_white.svg";
 
 // Register plugin
 if (typeof window !== "undefined") {
@@ -21,21 +21,22 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const happyrobotWrapperRef = useRef<HTMLDivElement>(null);
   const happyrobotRef = useRef<SVGSVGElement>(null);
-  const unirRef = useRef<SVGSVGElement>(null);
+  const uberRef = useRef<SVGSVGElement>(null);
+
   const textRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (
       !happyrobotRef.current ||
-      !unirRef.current ||
+      !uberRef.current ||
       !happyrobotWrapperRef.current
     )
       return;
 
     // Get path elements from the SVGs
     const happyrobotPaths = happyrobotRef.current.querySelectorAll("path");
-    const unirPaths = unirRef.current.querySelectorAll("path");
+    const unirPaths = uberRef.current.querySelectorAll("path");
 
     if (happyrobotPaths.length === 0 || unirPaths.length === 0) return;
 
@@ -48,7 +49,7 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
 
       // Initial state
       gsap.set(happyrobotRef.current, { opacity: 0, scale: 0.8 });
-      gsap.set(unirRef.current, { opacity: 0 });
+      gsap.set(uberRef.current, { opacity: 0 });
       gsap.set(textRef.current, { y: 30, opacity: 0 });
       gsap.set(glowRef.current, { scale: 0, opacity: 0 });
 
@@ -162,8 +163,8 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
         className="absolute left-1/2 top-1/2"
         style={{ transform: "translate(-50%, -50%)", visibility: "hidden" }}
       >
-        <UnirLogo
-          ref={unirRef}
+        <UberLogo
+          ref={uberRef}
           className="overflow-visible"
           width={300}
           height={141}

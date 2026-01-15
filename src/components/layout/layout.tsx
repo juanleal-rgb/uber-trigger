@@ -231,10 +231,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Image
           src={
             theme === "light"
-              ? "/unir/logo-black-small.svg"
-              : "/unir/logo-white-small.svg"
+              ? "/uber/Uber_logo_2018.svg"
+              : "/uber/Uber_logo_2018_white.svg"
           }
-          alt="UNIR"
+          alt="Uber"
           width={32}
           height={32}
           className="object-contain"
@@ -312,8 +312,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <Image
                 src={
                   theme === "light"
-                    ? "/unir/logo-black-small.svg"
-                    : "/unir/logo-white-small.svg"
+                    ? "/uber/Uber_logo_2018.svg"
+                    : "/uber/Uber_logo_2018_white.svg"
                 }
                 alt="UNIR"
                 width={32}
@@ -332,8 +332,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <Image
                 src={
                   theme === "light"
-                    ? "/unir/logo-black.svg"
-                    : "/unir/logo-white.svg"
+                    ? "/uber/Uber_logo_2018.svg"
+                    : "/uber/Uber_logo_2018_white.svg"
                 }
                 alt="UNIR La Universidad en Internet"
                 width={120}
