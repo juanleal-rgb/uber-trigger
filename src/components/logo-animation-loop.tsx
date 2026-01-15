@@ -187,7 +187,7 @@ export function LogoAnimationLoop({
   // Uber SVG viewBox is 926.906 × 321.777 (much wider than tall)
   // We intentionally keep it a bit narrower than the HappyRobot visual to avoid "oversized" feel.
   const uberAspect = 926.906 / 321.777;
-  const uberWidth = happyrobotWidth * 0.5;
+  const uberWidth = happyrobotWidth * 0.2;
   const uberHeight = uberWidth / uberAspect;
 
   return (
