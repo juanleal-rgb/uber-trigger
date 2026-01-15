@@ -11,8 +11,6 @@ import {
   AlertCircle,
   Loader2,
   ExternalLink,
-  ChevronDown,
-  X,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -21,66 +19,6 @@ import { PhoneHappyRobotMorph } from "@/components/ui/PhoneHappyRobotMorph";
 import { LogoAnimationLoop } from "@/components/logo-animation-loop";
 import { useToast } from "@/components/ui/toaster";
 
-// Palanca options for the dropdown
-const PALANCAS = [
-  {
-    id: "enfoque-practico",
-    title: "Enfoque práctico (neuropsicología educativa)",
-    example:
-      "Lo interesante es que no es formación clínica, sino práctica. Aprende a identificar dificultades de aprendizaje en el aula y cómo intervenir directamente.",
-    when: "Usar cuando busca aplicación real en su trabajo",
-  },
-  {
-    id: "estrategias-neurodidacticas",
-    title: "Estrategias neurodidácticas",
-    example:
-      "Va a aprender a diseñar actividades que mejoren lectura, escritura, atención, memoria... todo lo que necesita un docente en el día a día.",
-    when: "Usar cuando menciona problemas con estudiantes o quiere mejorar su práctica",
-  },
-  {
-    id: "funcionamiento-cerebral-tic",
-    title: "Funcionamiento cerebral + TIC",
-    example:
-      "Entiende cómo procesa información el cerebro y cómo aprovechar la tecnología para potenciar el aprendizaje.",
-    when: "Usar cuando su perfil indica interés en neurociencia o tecnología",
-  },
-  {
-    id: "deteccion-temprana",
-    title: "Detección temprana",
-    example:
-      "Le prepara para identificar inteligencias múltiples, talento, dificultades lingüísticas... detectar a tiempo hace toda la diferencia.",
-    when: "Usar cuando trabaja con niños o su historial menciona casos difíciles",
-  },
-  {
-    id: "reportes-psicopedagogicos",
-    title: "Reportes psicopedagógicos",
-    example:
-      "Aprende a elaborar reportes profesionales con datos cuantitativos y cualitativos, basados en pruebas estandarizadas. Es algo muy solicitado.",
-    when: "Usar cuando busca diferenciarse o tiene rol de orientador",
-  },
-  {
-    id: "perfil-profesional-ampliado",
-    title: "Perfil profesional ampliado",
-    example:
-      "Al terminar, puede asesorar, diagnosticar, intervenir... se convierte en un experto que mejora la práctica educativa de forma significativa.",
-    when: "Usar cuando busca crecimiento profesional o mejores oportunidades",
-  },
-  {
-    id: "doble-titulacion",
-    title: "Doble titulación",
-    example:
-      "Obtiene la Maestría Oficial Mexicana avalada por SEP y además un Título Propio Europeo de UNIR España.",
-    when: "Usar siempre como diferenciador",
-  },
-  {
-    id: "diplomas-extra",
-    title: "Diplomas extra incluidos",
-    example:
-      "Además de la maestría, le incluyen diplomas como 'Procesos cognitivos en neuroeducación' e 'Innovación para el desarrollo cognitivo'.",
-    when: "Usar para mostrar valor adicional",
-  },
-];
-
 // Zod schema for form validation
 const triggerFormSchema = z.object({
   nombreAlumno: z.string().min(1, "Nombre del alumno es requerido"),
@@ -88,15 +26,6 @@ const triggerFormSchema = z.object({
     .string()
     .min(1, "Teléfono es requerido")
     .regex(/^\+\d/, "El teléfono debe incluir el prefijo del país (ej: +34)"),
-  programa: z.string().optional(),
-  formacionPrevia: z.string().optional(),
-  pais: z.string().optional(),
-  edad: z.string().optional(),
-  estudiosPrevios: z.string().optional(),
-  motivacion: z.string().optional(),
-  canal: z.string().optional(),
-  razonNoInteres: z.string().optional(),
-  palanca: z.string().optional(),
 });
 
 type TriggerFormData = z.infer<typeof triggerFormSchema>;
@@ -156,21 +85,10 @@ export default function TriggerPage() {
   const [formData, setFormData] = useState<TriggerFormData>({
     nombreAlumno: "",
     telefono: "",
-    programa: "Maestría en Aprendizaje, Cognición y Desarrollo Educativo",
-    formacionPrevia: "Licenciado",
-    pais: "México",
-    edad: "25",
-    estudiosPrevios:
-      "Grado en Educación en la Universidad Nacional Autónoma de México",
-    motivacion: "",
-    canal: "Web",
-    razonNoInteres: "",
-    palanca: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
-  const [palancaDropdownOpen, setPalancaDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"form" | "calls">("form");
   const { success: showSuccess } = useToast();
 
@@ -268,6 +186,11 @@ export default function TriggerPage() {
   const isFormValid =
     formData.nombreAlumno.trim() !== "" && formData.telefono.trim() !== "";
 
+  const firstName =
+    formData.nombreAlumno.trim().split(" ")[0] ||
+    session?.user?.name?.split(" ")[0] ||
+    "{!firstname}";
+
   // Count active/running calls for badge
   const activeCallsCount = activeCalls.filter(
     (c) => c.status === "PENDING" || c.status === "RUNNING",
@@ -326,6 +249,117 @@ export default function TriggerPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Email thread (reference) */}
+              <div className="linear-card p-5">
+                <h2 className="mb-4 text-sm font-medium text-fg-secondary">
+                  Hilo de correo (referencia)
+                </h2>
+
+                <div className="space-y-4">
+                  {/* EMAIL 1 */}
+                  <div className="rounded-xl border border-border-subtle bg-bg-elevated/40 p-4">
+                    <div className="mb-3 grid gap-1 text-[12px] text-fg-muted sm:grid-cols-3">
+                      <div>
+                        <span className="font-medium text-fg-secondary">
+                          From:
+                        </span>{" "}
+                        Uber
+                      </div>
+                      <div>
+                        <span className="font-medium text-fg-secondary">
+                          To:
+                        </span>{" "}
+                        User
+                      </div>
+                      <div className="sm:text-right">
+                        <span className="font-medium text-fg-secondary">
+                          Subject:
+                        </span>{" "}
+                        Movilidad corporativa para Milano–Cortina 2026
+                      </div>
+                    </div>
+
+                    <div className="whitespace-pre-line text-[13px] leading-relaxed text-fg-primary">
+                      {`Buenos días ${firstName},
+mi nombre es Ismael y me ocupo de Business Partnerships en Uber for Business.
+
+De cara a los Juegos Olímpicos y Paralímpicos Milano–Cortina 2026, de los que Uber es Official Mobility Partner, muchas empresas están evaluando cómo gestionar de la mejor manera los desplazamientos de sus equipos y de sus invitados durante el evento. ¿Cómo estáis planificando la movilidad de vuestra empresa para los Juegos?
+
+Nuestra plataforma, totalmente gratuita, permite:
+● centralizar todos los viajes (Uber y taxi) en un único panel;
+● definir políticas y controlar el gasto en tiempo real;
+● gestionar traslados y desplazamientos entre Milán y las sedes de los eventos;
+● recibir una única factura mensual con IVA desglosado, sin anticipos ni gestión de recibos.
+
+Es importante destacar que Uber for Business no es una solución limitada a los Juegos Olímpicos: la plataforma puede utilizarse también para gestionar de forma centralizada toda la movilidad corporativa de los empleados, tanto a nivel local como internacional, antes, durante y después del evento, para la operativa diaria, viajes de trabajo, reuniones y eventos.
+
+¿Tienes disponibilidad esta semana para una breve llamada?
+${firstName}, puedes responder directamente indicando los horarios que prefieras y te enviaré la invitación.
+
+Un saludo,
+Ismael`}
+                    </div>
+                  </div>
+
+                  {/* EMAIL 2 */}
+                  <div className="rounded-xl border border-border-subtle bg-bg-elevated/20 p-4">
+                    <div className="mb-3 grid gap-1 text-[12px] text-fg-muted sm:grid-cols-3">
+                      <div>
+                        <span className="font-medium text-fg-secondary">
+                          From:
+                        </span>{" "}
+                        Uber
+                      </div>
+                      <div>
+                        <span className="font-medium text-fg-secondary">
+                          To:
+                        </span>{" "}
+                        User
+                      </div>
+                      <div className="sm:text-right">
+                        <span className="font-medium text-fg-secondary">
+                          Subject:
+                        </span>{" "}
+                        Re: Movilidad corporativa para Milano–Cortina 2026
+                      </div>
+                    </div>
+
+                    <div className="whitespace-pre-line text-[13px] leading-relaxed text-fg-primary">
+                      {`Hola ${firstName},
+¿Pudiste ver mi correo anterior? ¿Te gustaría tener una llamada?`}
+                    </div>
+                  </div>
+
+                  {/* EMAIL 3 */}
+                  <div className="rounded-xl border border-border-subtle bg-bg-elevated/10 p-4">
+                    <div className="mb-3 grid gap-1 text-[12px] text-fg-muted sm:grid-cols-3">
+                      <div>
+                        <span className="font-medium text-fg-secondary">
+                          From:
+                        </span>{" "}
+                        User
+                      </div>
+                      <div>
+                        <span className="font-medium text-fg-secondary">
+                          To:
+                        </span>{" "}
+                        Uber
+                      </div>
+                      <div className="sm:text-right">
+                        <span className="font-medium text-fg-secondary">
+                          Subject:
+                        </span>{" "}
+                        Re: Movilidad corporativa para Milano–Cortina 2026
+                      </div>
+                    </div>
+
+                    <div className="whitespace-pre-line text-[13px] leading-relaxed text-fg-primary">
+                      {"Si, en una hora aproximadamente estoy disponible"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Required fields */}
               <div className="linear-card p-5">
                 <h2 className="mb-4 text-sm font-medium text-fg-secondary">
@@ -375,217 +409,6 @@ export default function TriggerPage() {
                         {errors.telefono}
                       </p>
                     )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Optional fields */}
-              <div className="linear-card p-5">
-                <h2 className="mb-4 text-sm font-medium text-fg-secondary">
-                  Rellenar informacion adicional
-                </h2>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-1.5 block text-[13px] font-medium text-fg-muted">
-                      Programa de Interés
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.programa}
-                      onChange={(e) =>
-                        handleInputChange("programa", e.target.value)
-                      }
-                      placeholder="Maestría en..."
-                      className="linear-input"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-[13px] font-medium text-fg-muted">
-                      Formacion Previa
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.formacionPrevia}
-                      onChange={(e) =>
-                        handleInputChange("formacionPrevia", e.target.value)
-                      }
-                      placeholder="Licenciado"
-                      className="linear-input"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-[13px] font-medium text-fg-muted">
-                      Estudios Previos
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.estudiosPrevios}
-                      onChange={(e) =>
-                        handleInputChange("estudiosPrevios", e.target.value)
-                      }
-                      placeholder="Grado en Educación en la Universidad Nacional Autónoma de México"
-                      className="linear-input"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 gap-4 sm:col-span-2 sm:grid-cols-3">
-                    <div>
-                      <label className="mb-1.5 block text-[13px] font-medium text-fg-muted">
-                        Pais
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.pais}
-                        onChange={(e) =>
-                          handleInputChange("pais", e.target.value)
-                        }
-                        placeholder="México"
-                        className="linear-input"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1.5 block text-[13px] font-medium text-fg-muted">
-                        Edad
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.edad}
-                        onChange={(e) =>
-                          handleInputChange("edad", e.target.value)
-                        }
-                        placeholder="25"
-                        className="linear-input"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1.5 block text-[13px] font-medium text-fg-muted">
-                        Canal
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.canal}
-                        onChange={(e) =>
-                          handleInputChange("canal", e.target.value)
-                        }
-                        placeholder="Web, Telefono..."
-                        className="linear-input"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-[13px] font-medium text-fg-muted">
-                      Motivacion
-                    </label>
-                    <textarea
-                      value={formData.motivacion}
-                      onChange={(e) =>
-                        handleInputChange("motivacion", e.target.value)
-                      }
-                      placeholder="Describir motivacion del alumno..."
-                      rows={2}
-                      className="linear-input resize-none"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-[13px] font-medium text-fg-muted">
-                      Razon de No Interes
-                    </label>
-                    <textarea
-                      value={formData.razonNoInteres}
-                      onChange={(e) =>
-                        handleInputChange("razonNoInteres", e.target.value)
-                      }
-                      placeholder="Si aplica, describir razon..."
-                      rows={2}
-                      className="linear-input resize-none"
-                    />
-                  </div>
-
-                  {/* Palanca dropdown */}
-                  <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-[13px] font-medium text-fg-muted">
-                      Palanca de Valor
-                      <span className="ml-1 text-fg-disabled">(opcional)</span>
-                    </label>
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setPalancaDropdownOpen(!palancaDropdownOpen)
-                        }
-                        className="linear-input flex w-full items-center justify-between text-left"
-                      >
-                        <span
-                          className={
-                            formData.palanca
-                              ? "text-fg-primary"
-                              : "text-fg-muted"
-                          }
-                        >
-                          {formData.palanca
-                            ? PALANCAS.find((p) => p.id === formData.palanca)
-                                ?.title
-                            : "Seleccionar palanca..."}
-                        </span>
-                        <ChevronDown
-                          className={cn(
-                            "h-4 w-4 text-fg-muted transition-transform",
-                            palancaDropdownOpen && "rotate-180",
-                          )}
-                        />
-                      </button>
-
-                      {palancaDropdownOpen && (
-                        <>
-                          <div
-                            className="fixed inset-0 z-40"
-                            onClick={() => setPalancaDropdownOpen(false)}
-                          />
-                          <div className="absolute left-0 right-0 z-50 mt-2 max-h-[300px] overflow-y-auto rounded-xl border border-border-subtle bg-bg-elevated py-2 shadow-xl md:bottom-full md:top-auto md:mb-2 md:mt-0 md:max-h-[400px]">
-                            {/* Clear option */}
-                            {formData.palanca && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  handleInputChange("palanca", "");
-                                  setPalancaDropdownOpen(false);
-                                }}
-                                className="flex w-full items-center gap-2 border-b border-border-subtle px-4 py-2.5 text-sm text-red-500 transition-colors hover:bg-red-500/10"
-                              >
-                                <X className="h-3.5 w-3.5" />
-                                Limpiar selección
-                              </button>
-                            )}
-
-                            {/* Options */}
-                            {PALANCAS.map((palanca) => (
-                              <button
-                                key={palanca.id}
-                                type="button"
-                                onClick={() => {
-                                  handleInputChange("palanca", palanca.id);
-                                  setPalancaDropdownOpen(false);
-                                }}
-                                className={cn(
-                                  "w-full border-b border-border-subtle px-4 py-3 text-left transition-colors last:border-0 hover:bg-bg-hover",
-                                  formData.palanca === palanca.id &&
-                                    "bg-blue-500/10",
-                                )}
-                              >
-                                <div className="mb-1 text-sm font-medium text-fg-primary">
-                                  {palanca.title}
-                                </div>
-                                <div className="mb-1.5 text-xs italic leading-relaxed text-fg-secondary">
-                                  &ldquo;{palanca.example}&rdquo;
-                                </div>
-                                <div className="text-[11px] font-medium text-blue-400">
-                                  {palanca.when}
-                                </div>
-                              </button>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </div>
                   </div>
                 </div>
               </div>
