@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
       );
     }
     const apiKey = process.env.HAPPYROBOT_X_API_KEY;
+    const appUrl = process.env.APP_URL;
 
     const firstName = data.nombreAlumno.trim().split(" ")[0] || data.nombreAlumno.trim();
 
@@ -139,6 +140,7 @@ Did you get a chance to see my previous email? Would you be open to a quick call
         },
         body: JSON.stringify({
           phone_number: data.telefono.trim(),
+          ...(appUrl ? { callback_url: `${appUrl.replace(/\/$/, "")}/api/calls/callback` } : {}),
           context: workflowContext,
         }),
       });

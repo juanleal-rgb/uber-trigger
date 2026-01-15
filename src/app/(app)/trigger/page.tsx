@@ -463,7 +463,7 @@ Ismael`}
                 className="opacity-60"
               />
               <h2 className="text-sm font-semibold text-fg-primary">
-                Llamadas Activas
+                Historial
               </h2>
             </div>
             <div className="flex items-center gap-2 text-xs text-fg-muted">
@@ -480,7 +480,7 @@ Ismael`}
             <div className="flex flex-col items-center justify-center py-8">
               <LogoAnimationLoop size={40} pauseDuration={5} />
               <p className="mt-4 text-sm text-fg-muted">
-                No hay llamadas activas
+                No hay llamadas aún
               </p>
             </div>
           ) : (
@@ -588,7 +588,32 @@ Ismael`}
               })()}
             </div>
 
-            {/* Keep the detail view minimal: only lead name + phone are shown above */}
+            {/* Workflow result (summary / contract) */}
+            {selectedCall.metadata &&
+              typeof selectedCall.metadata === "object" &&
+              (selectedCall.metadata as any)?.workflowResult && (
+                <div className="linear-card mt-6 p-4">
+                  <p className="mb-2 text-sm font-medium text-fg-secondary">
+                    Resumen de la llamada
+                  </p>
+                  <pre className="whitespace-pre-wrap break-words text-sm text-fg-primary">
+                    {(selectedCall.metadata as any).workflowResult.summary ||
+                      "—"}
+                  </pre>
+
+                  {(selectedCall.metadata as any).workflowResult.contractDraft && (
+                    <>
+                      <p className="mb-2 mt-4 text-sm font-medium text-fg-secondary">
+                        Boceto de contrato
+                      </p>
+                      <pre className="whitespace-pre-wrap break-words text-sm text-fg-primary">
+                        {(selectedCall.metadata as any).workflowResult
+                          .contractDraft as string}
+                      </pre>
+                    </>
+                  )}
+                </div>
+              )}
 
             {selectedCall.errorMsg && (
               <div className="mt-6 rounded-lg border border-status-danger/20 bg-status-danger/10 p-4">
@@ -599,17 +624,6 @@ Ismael`}
               </div>
             )}
 
-            {selectedCall.metadata &&
-              Object.keys(selectedCall.metadata).length > 0 && (
-                <div className="mt-6">
-                  <p className="mb-2 text-sm font-medium text-fg-secondary">
-                    Metadata
-                  </p>
-                  <pre className="overflow-auto rounded-lg bg-bg-elevated p-4 text-xs text-fg-secondary">
-                    {JSON.stringify(selectedCall.metadata, null, 2)}
-                  </pre>
-                </div>
-              )}
           </div>
         </div>
       )}

@@ -70,11 +70,8 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get only active calls (PENDING or RUNNING)
+    // Get recent calls (include completed) so the UI can show history + summaries.
     const calls = await prisma.call.findMany({
-      where: {
-        status: { in: ["PENDING", "RUNNING"] },
-      },
       include: {
         user: {
           select: {
