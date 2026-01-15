@@ -26,6 +26,15 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
   const textRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
+  // Target sizing: Uber SVG is very wide (viewBox 926.906 × 321.777). If we use large
+  // dimensions, the morphed Uber shape looks oversized vs HappyRobot.
+  const HAPPYROBOT_WIDTH = 150;
+  const HAPPYROBOT_HEIGHT = 118;
+  const UBER_ASPECT = 926.906 / 321.777;
+  const UBER_TARGET_SCALE = 0.5; // tweak if needed (smaller = less visually dominant)
+  const uberTargetWidth = HAPPYROBOT_WIDTH * UBER_TARGET_SCALE;
+  const uberTargetHeight = uberTargetWidth / UBER_ASPECT;
+
   useEffect(() => {
     if (
       !happyrobotRef.current ||
@@ -36,9 +45,9 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
 
     // Get path elements from the SVGs
     const happyrobotPaths = happyrobotRef.current.querySelectorAll("path");
-    const unirPaths = uberRef.current.querySelectorAll("path");
+    const uberPaths = uberRef.current.querySelectorAll("path");
 
-    if (happyrobotPaths.length === 0 || unirPaths.length === 0) return;
+    if (happyrobotPaths.length === 0 || uberPaths.length === 0) return;
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -70,30 +79,18 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
           duration: 0.3,
           ease: "power2.out",
         })
-        // Morph first HappyRobot path to first UNIR path + shift container left to compensate for coordinate change
+        // Morph first HappyRobot path to Uber path
         .to(
           happyrobotPaths[0],
           {
             morphSVG: {
-              shape: unirPaths[0],
+              shape: uberPaths[0],
               shapeIndex: "auto",
             },
             duration: 1.2,
             ease: "power2.inOut",
           },
           "-=0.1",
-        )
-        // Simultaneously shift the wrapper to compensate for UNIR's path offset
-        // After morph, "uniR" visual center is ~120px from SVG left, SVG center is 75px
-        // Need to shift left by ~45px to center the morphed result
-        .to(
-          happyrobotWrapperRef.current,
-          {
-            x: -45,
-            duration: 1.2,
-            ease: "power2.inOut",
-          },
-          "-=1.2",
         )
         // Fade out second path during morph
         .to(
@@ -153,12 +150,12 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
         <HappyRobotLogo
           ref={happyrobotRef}
           className="overflow-visible"
-          width={150}
-          height={118}
+          width={HAPPYROBOT_WIDTH}
+          height={HAPPYROBOT_HEIGHT}
         />
       </div>
 
-      {/* UNIR Logo - hidden, used as morph target */}
+      {/* Uber Logo - hidden, used as morph target */}
       <div
         className="absolute left-1/2 top-1/2"
         style={{ transform: "translate(-50%, -50%)", visibility: "hidden" }}
@@ -166,8 +163,8 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
         <UberLogo
           ref={uberRef}
           className="overflow-visible"
-          width={300}
-          height={141}
+          width={uberTargetWidth}
+          height={uberTargetHeight}
         />
       </div>
 

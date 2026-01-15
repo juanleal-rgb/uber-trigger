@@ -319,10 +319,10 @@ export default function LoginPage() {
           <p className="text-center text-[12px] text-white/40">
             ¿Olvidaste tu contraseña? Escribe un mail a{" "}
             <a
-              href="mailto:fernando@happyrobot.ai"
+              href="mailto:juan.leal@happyrobot.ai"
               className="text-blue-400/80 underline-offset-4 hover:underline"
             >
-              fernando@happyrobot.ai
+              juan.leal@happyrobot.ai
             </a>
           </p>
         </form>
