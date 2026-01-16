@@ -88,7 +88,6 @@ export default function TriggerPage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
-  const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [activeTab, setActiveTab] = useState<"form" | "calls">("form");
   const { success: showSuccess } = useToast();
 
@@ -174,12 +173,6 @@ export default function TriggerPage() {
       return;
     }
 
-    // Show disclaimer modal before triggering
-    setShowDisclaimer(true);
-  };
-
-  const handleConfirmCall = () => {
-    setShowDisclaimer(false);
     triggerMutation.mutate(formData);
   };
 
@@ -628,62 +621,6 @@ Ismael`}
         </div>
       )}
 
-      {/* Disclaimer Modal */}
-      {showDisclaimer && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-overlay-backdrop backdrop-blur-sm"
-          onClick={() => setShowDisclaimer(false)}
-        >
-          <div
-            className="relative mx-4 w-full max-w-md rounded-xl border border-border-subtle bg-bg-surface p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/15">
-                <AlertCircle className="h-5 w-5 text-amber-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-fg-primary">
-                ¡Aviso a navegantes!
-              </h3>
-            </div>
-
-            <div className="mb-6 space-y-3 text-sm leading-relaxed text-fg-secondary">
-              <p>
-                Por ahora, el paso final de paso de la llamada con un director
-                no está implementado. Es normal que haya un silencio un poco más
-                largo de lo habitual o algo incómodo.
-              </p>
-              <p>
-                <span className="font-medium text-fg-primary">
-                  Omitir en el feedback por favor
-                </span>
-                , es normal hasta que se habilite.
-              </p>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDisclaimer(false)}
-                className="linear-btn-secondary flex-1 py-2.5"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleConfirmCall}
-                className="linear-btn-primary flex flex-1 items-center justify-center gap-2 py-2.5"
-              >
-                <PhoneHappyRobotMorph
-                  size={16}
-                  logoColor="white"
-                  variant="flip"
-                  isActive={true}
-                />
-                Continuar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
