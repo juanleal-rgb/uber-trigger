@@ -7,6 +7,19 @@ import { authOptions } from "@/lib/auth";
 const triggerSchema = z.object({
   nombreAlumno: z.string().min(1),
   telefono: z.string().min(1),
+}).transform((v) => ({
+  ...v,
+  telefono: v.telefono.replace(/\s+/g, ""),
+}));
+
+const E164_PHONE_REGEX = /^\+[1-9]\d{6,14}$/;
+
+const triggerSchemaValidated = triggerSchema.refine(
+  (v) => E164_PHONE_REGEX.test(v.telefono),
+  {
+    message: "Invalid phone format. Use international E.164 without spaces, e.g. +34612345678",
+    path: ["telefono"],
+  },
 });
 
 export async function POST(req: NextRequest) {
@@ -17,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const result = triggerSchema.safeParse(body);
+    const result = triggerSchemaValidated.safeParse(body);
 
     if (!result.success) {
       return NextResponse.json(

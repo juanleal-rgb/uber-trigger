@@ -25,7 +25,11 @@ const triggerFormSchema = z.object({
   telefono: z
     .string()
     .min(1, "Teléfono es requerido")
-    .regex(/^\+\d/, "El teléfono debe incluir el prefijo del país (ej: +34)"),
+    .regex(/^\+\d/, "El teléfono debe incluir el prefijo del país (ej: +34)")
+    .regex(
+      /^\+[1-9]\d{6,14}$/,
+      "Formato inválido. Usa formato internacional sin espacios (ej: +34612345678)",
+    ),
 });
 
 type TriggerFormData = z.infer<typeof triggerFormSchema>;
@@ -392,7 +396,10 @@ Ismael`}
                       type="text"
                       value={formData.telefono}
                       onChange={(e) =>
-                        handleInputChange("telefono", e.target.value)
+                        handleInputChange(
+                          "telefono",
+                          e.target.value.replace(/\s+/g, ""),
+                        )
                       }
                       placeholder="+34 612 345 678"
                       className={cn(
