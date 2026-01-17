@@ -2,10 +2,16 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 
 // Import SVGs as React components (SVGR)
 import HappyRobotLogo from "@public/happyrobot/Footer-logo-white.svg";
-import UberLogo from "@public/uber/Uber_logo_2018_white.svg";
+import UberMorphLogo from "@public/uber/Uber_logo_2018_wordmark_singlepath_white.svg";
+
+// Register plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(MorphSVGPlugin);
+}
 
 interface LogoAnimationProps {
   onComplete?: () => void;
@@ -15,7 +21,7 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const happyrobotWrapperRef = useRef<HTMLDivElement>(null);
   const happyrobotRef = useRef<SVGSVGElement>(null);
-  const uberVisibleRef = useRef<SVGSVGElement>(null);
+  const uberMorphRef = useRef<SVGSVGElement>(null);
 
   const textRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
@@ -23,19 +29,25 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
   // Uber SVG is very wide (viewBox 926.906 × 321.777)
   const HAPPYROBOT_WIDTH = 150;
   const HAPPYROBOT_HEIGHT = 118;
-  const UBER_ASPECT = 926.906 / 321.777;
-
-  // Full Uber logo (wordmark)
+  const UBER_VIEWBOX_WIDTH = 926.906;
+  const UBER_VIEWBOX_HEIGHT = 321.777;
+  const UBER_ASPECT = UBER_VIEWBOX_WIDTH / UBER_VIEWBOX_HEIGHT;
+  const uberTargetWidth = UBER_VIEWBOX_WIDTH;
+  const uberTargetHeight = UBER_VIEWBOX_HEIGHT;
   const UBER_DISPLAY_SCALE = 1.4;
-  const uberDisplayWidth = HAPPYROBOT_WIDTH * UBER_DISPLAY_SCALE;
-  const uberDisplayHeight = uberDisplayWidth / UBER_ASPECT;
+  const UBER_MORPH_SCALE = (HAPPYROBOT_WIDTH * UBER_DISPLAY_SCALE) / UBER_VIEWBOX_WIDTH;
 
   useEffect(() => {
     if (
       !happyrobotRef.current ||
-      !happyrobotWrapperRef.current
+      !happyrobotWrapperRef.current ||
+      !uberMorphRef.current
     )
       return;
+
+    const happyrobotPaths = happyrobotRef.current.querySelectorAll("path");
+    const uberPaths = uberMorphRef.current.querySelectorAll("path");
+    if (happyrobotPaths.length < 1 || uberPaths.length < 1) return;
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -50,13 +62,7 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
         scale: 0.94,
         filter: "blur(6px)",
       });
-      if (uberVisibleRef.current) {
-        gsap.set(uberVisibleRef.current, {
-          opacity: 0,
-          scale: 0.98,
-          filter: "blur(8px)",
-        });
-      }
+      gsap.set(uberMorphRef.current, { opacity: 0 });
       gsap.set(textRef.current, { y: 30, opacity: 0 });
       gsap.set(glowRef.current, { scale: 0, opacity: 0 });
       gsap.set(happyrobotWrapperRef.current, { scale: 1, x: 0, y: 0, opacity: 1 });
@@ -79,26 +85,27 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
           duration: 0.45,
           ease: "power2.inOut",
         })
-        // Crossfade to full Uber logo (wordmark)
+        // Fade out second HappyRobot path (if present) so we morph cleanly
         .to(
-          uberVisibleRef.current,
-          {
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 0.6,
-            ease: "power2.inOut",
-          },
+          happyrobotPaths[1],
+          { opacity: 0, duration: 0.25, ease: "power2.out" },
           "-=0.25",
         )
+        // Morph first HappyRobot path to Uber wordmark (single compound path)
         .to(
-          happyrobotWrapperRef.current,
+          happyrobotPaths[0],
           {
-            opacity: 0,
-            duration: 0.6,
+            morphSVG: { shape: uberPaths[0], shapeIndex: "auto" },
+            duration: 0.9,
             ease: "power2.inOut",
           },
-          "-=0.6",
+          "-=0.15",
+        )
+        // Scale the wrapper down so the big Uber viewBox fits the same visual area
+        .to(
+          happyrobotWrapperRef.current,
+          { scale: UBER_MORPH_SCALE, duration: 0.9, ease: "power2.inOut" },
+          "-=0.9",
         )
         // Fade out glow
         .to(
@@ -155,13 +162,13 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
       {/* Uber Logo - visible (wordmark), faded in after morph */}
       <div
         className="absolute left-1/2 top-1/2"
-        style={{ transform: "translate(-50%, -50%)" }}
+        style={{ transform: "translate(-50%, -50%)", visibility: "hidden" }}
       >
-        <UberLogo
-          ref={uberVisibleRef}
+        <UberMorphLogo
+          ref={uberMorphRef}
           className="overflow-visible opacity-0"
-          width={uberDisplayWidth}
-          height={uberDisplayHeight}
+          width={uberTargetWidth}
+          height={uberTargetHeight}
         />
       </div>
 
