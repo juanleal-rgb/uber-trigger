@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { Prisma } from "@prisma/client";
 
 const E164_PHONE_REGEX = /^\+[1-9]\d{6,14}$/;
 
@@ -58,6 +59,11 @@ export async function POST(req: NextRequest) {
 
       const nombreAlumno = rawNombre.trim() || "—";
       const telefono = rawTelefono.replace(/\s+/g, "");
+      const validationErrors = result.error.errors.map((e) => ({
+        code: e.code,
+        message: e.message,
+        path: e.path,
+      }));
 
       const now = new Date();
       await prisma.call.create({
@@ -80,9 +86,9 @@ export async function POST(req: NextRequest) {
               ? `Validation failed: ${result.error.errors[0].message}`
               : "Validation failed",
           metadata: {
-            validationErrors: result.error.errors,
+            validationErrors,
             lead: { fullName: rawNombre, phoneNumber: rawTelefono },
-          },
+          } as unknown as Prisma.InputJsonValue,
           userId: userId || null,
         },
       });

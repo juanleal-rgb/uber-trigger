@@ -23,6 +23,18 @@ export function LogoAnimationLoop({
   size = 48,
   pauseDuration = 5,
 }: LogoAnimationLoopProps) {
+  // Calculate proportional sizes (used by animation too)
+  const happyrobotHeight = size;
+  const happyrobotWidth = (size * 150) / 118;
+  const UBER_VIEWBOX_WIDTH = 926.906;
+  const UBER_VIEWBOX_HEIGHT = 321.777;
+  // Choose a visual width relative to HappyRobot for the morphed wordmark
+  const uberDisplayWidth = happyrobotWidth * 1.35;
+  const uberMorphScale = uberDisplayWidth / UBER_VIEWBOX_WIDTH;
+  // Morph target uses the raw viewBox size (hidden)
+  const uberTargetWidth = UBER_VIEWBOX_WIDTH;
+  const uberTargetHeight = UBER_VIEWBOX_HEIGHT;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const happyrobotWrapperRef = useRef<HTMLDivElement>(null);
   const happyrobotRef = useRef<SVGSVGElement>(null);
@@ -144,21 +156,7 @@ export function LogoAnimationLoop({
     }, containerRef);
 
     return () => ctx.revert();
-  }, [pauseDuration]);
-
-  // Calculate proportional sizes
-  const happyrobotHeight = size;
-  const happyrobotWidth = (size * 150) / 118;
-  // Uber SVG viewBox is 926.906 × 321.777 (much wider than tall)
-  const UBER_VIEWBOX_WIDTH = 926.906;
-  const UBER_VIEWBOX_HEIGHT = 321.777;
-  const uberAspect = UBER_VIEWBOX_WIDTH / UBER_VIEWBOX_HEIGHT;
-  // Choose a visual width relative to HappyRobot for the morphed wordmark
-  const uberDisplayWidth = happyrobotWidth * 1.35;
-  const uberMorphScale = uberDisplayWidth / UBER_VIEWBOX_WIDTH;
-  // Morph target uses the raw viewBox size (hidden)
-  const uberTargetWidth = UBER_VIEWBOX_WIDTH;
-  const uberTargetHeight = UBER_VIEWBOX_HEIGHT;
+  }, [pauseDuration, uberMorphScale]);
 
   return (
     <div

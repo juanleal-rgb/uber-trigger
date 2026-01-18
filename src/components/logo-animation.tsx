@@ -132,7 +132,7 @@ export function LogoAnimation({ onComplete }: LogoAnimationProps) {
     }, containerRef);
 
     return () => ctx.revert();
-  }, [onComplete]);
+  }, [onComplete, UBER_MORPH_SCALE]);
 
   return (
     <div
