@@ -213,7 +213,7 @@ export default function LlamadasPage() {
               <tr>
                 <th className="w-[25%]">Alumno</th>
                 <th className="w-[15%]">Telefono</th>
-                <th className="w-[25%]">Programa</th>
+                <th className="w-[25%]">Resumen</th>
                 <th className="w-[15%]">Estado</th>
                 <th className="w-[20%]">Fecha</th>
               </tr>
@@ -244,6 +244,10 @@ export default function LlamadasPage() {
                 data?.calls.map((call) => {
                   const config = statusConfig[call.status];
                   const StatusIcon = config.icon;
+                  const summary =
+                    (call.metadata as any)?.workflowResult?.summary ||
+                    (call.metadata as any)?.summary ||
+                    "";
                   return (
                     <tr
                       key={call.id}
@@ -256,8 +260,8 @@ export default function LlamadasPage() {
                       <td className="w-[15%] font-mono text-sm text-fg-secondary">
                         {call.telefono}
                       </td>
-                      <td className="w-[25%] max-w-[200px] truncate text-fg-secondary">
-                        {call.programa || "-"}
+                      <td className="w-[25%] max-w-[260px] truncate text-fg-secondary">
+                        {summary || "-"}
                       </td>
                       <td className="w-[15%]">
                         <span className={cn("pill", config.class)}>
@@ -360,59 +364,27 @@ export default function LlamadasPage() {
               })()}
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <DetailField label="Programa" value={selectedCall.programa} />
-              <DetailField
-                label="Formacion Previa"
-                value={selectedCall.formacionPrevia}
-              />
-              <DetailField label="Pais" value={selectedCall.pais} />
-              <DetailField label="Edad" value={selectedCall.edad} />
-              <DetailField
-                label="Estudios Previos"
-                value={selectedCall.estudiosPrevios}
-              />
-              <DetailField label="Canal" value={selectedCall.canal} />
-              <DetailField
-                label="Motivacion"
-                value={selectedCall.motivacion}
-                fullWidth
-              />
-              <DetailField
-                label="Razon No Interes"
-                value={selectedCall.razonNoInteres}
-                fullWidth
-              />
-              {selectedCall.runId && (
-                <div>
-                  <p className="text-xs font-medium text-fg-muted">Run ID</p>
-                  <p className="mt-1 font-mono text-sm text-fg-primary">
-                    {selectedCall.runId}
+            {/* Show only summary + metadata (legacy fields removed) */}
+            <div className="mt-6">
+              <p className="mb-2 text-sm font-medium text-fg-secondary">
+                Resumen
+              </p>
+              <pre className="whitespace-pre-wrap break-words rounded-lg bg-bg-surface p-4 text-sm text-fg-primary">
+                {(selectedCall.metadata as any)?.workflowResult?.summary ||
+                  (selectedCall.metadata as any)?.summary ||
+                  "-"}
+              </pre>
+
+              {(selectedCall.metadata as any)?.workflowResult?.contractDraft && (
+                <>
+                  <p className="mb-2 mt-6 text-sm font-medium text-fg-secondary">
+                    Boceto de contrato
                   </p>
-                  {isAdmin && HAPPYROBOT_ORG_SLUG && HAPPYROBOT_WORKFLOW_ID && (
-                    <a
-                      href={getHappyRobotRunUrl(selectedCall.runId)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-1 inline-flex items-center gap-1 text-xs text-accent-primary hover:underline"
-                    >
-                      Ver en HappyRobot
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-              )}
-              <DetailField
-                label="Creado"
-                value={new Date(selectedCall.createdAt).toLocaleString("es-ES")}
-              />
-              {selectedCall.completedAt && (
-                <DetailField
-                  label="Completado"
-                  value={new Date(selectedCall.completedAt).toLocaleString(
-                    "es-ES",
-                  )}
-                />
+                  <pre className="whitespace-pre-wrap break-words rounded-lg bg-bg-surface p-4 text-sm text-fg-primary">
+                    {(selectedCall.metadata as any)?.workflowResult
+                      ?.contractDraft as string}
+                  </pre>
+                </>
               )}
             </div>
 
@@ -439,23 +411,6 @@ export default function LlamadasPage() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function DetailField({
-  label,
-  value,
-  fullWidth = false,
-}: {
-  label: string;
-  value: string | null | undefined;
-  fullWidth?: boolean;
-}) {
-  return (
-    <div className={fullWidth ? "sm:col-span-2" : ""}>
-      <p className="text-xs font-medium text-fg-muted">{label}</p>
-      <p className="mt-1 text-sm text-fg-primary">{value || "-"}</p>
     </div>
   );
 }

@@ -26,16 +26,6 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const result = triggerSchema.safeParse(body);
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: "Validation failed", details: result.error.errors },
-        { status: 400 },
-      );
-    }
-
-    const data = result.data;
 
     // Get userId from session
     const userId = session.user?.id as string | undefined;
@@ -54,6 +44,56 @@ export async function POST(req: NextRequest) {
     }
     const apiKey = process.env.HAPPYROBOT_X_API_KEY;
     const appUrl = process.env.APP_URL;
+
+    const result = triggerSchema.safeParse(body);
+
+    if (!result.success) {
+      // Best-effort: record the failed attempt so it doesn't linger as "RUNNING" and you keep audit trail.
+      const rawNombre =
+        typeof (body as any)?.nombreAlumno === "string"
+          ? (body as any).nombreAlumno
+          : "";
+      const rawTelefono =
+        typeof (body as any)?.telefono === "string" ? (body as any).telefono : "";
+
+      const nombreAlumno = rawNombre.trim() || "—";
+      const telefono = rawTelefono.replace(/\s+/g, "");
+
+      const now = new Date();
+      await prisma.call.create({
+        data: {
+          nombreAlumno,
+          telefono: telefono || "—",
+          programa: null,
+          formacionPrevia: null,
+          pais: null,
+          edad: null,
+          estudiosPrevios: null,
+          motivacion: null,
+          canal: null,
+          razonNoInteres: null,
+          palanca: null,
+          status: "FAILED",
+          completedAt: now,
+          errorMsg:
+            result.error.errors?.[0]?.message
+              ? `Validation failed: ${result.error.errors[0].message}`
+              : "Validation failed",
+          metadata: {
+            validationErrors: result.error.errors,
+            lead: { fullName: rawNombre, phoneNumber: rawTelefono },
+          },
+          userId: userId || null,
+        },
+      });
+
+      return NextResponse.json(
+        { error: "Validation failed", details: result.error.errors },
+        { status: 400 },
+      );
+    }
+
+    const data = result.data;
 
     const firstName = data.nombreAlumno.trim().split(" ")[0] || data.nombreAlumno.trim();
 
