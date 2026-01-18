@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const status = normalizeStatus(anyBody?.status);
+    const statusFromPayload = normalizeStatus(anyBody?.status);
 
     // Flexible extraction for your workflow outputs
     const summary =
@@ -82,6 +82,10 @@ export async function POST(req: NextRequest) {
       asString(anyBody?.contract_draft) ||
       asString(anyBody?.contractDraft) ||
       asString(anyBody?.outputs?.contract_draft);
+
+    // If the workflow doesn't send status but sends final artifacts, treat it as completed.
+    const status =
+      statusFromPayload || (summary || contractDraft ? CallStatus.COMPLETED : null);
 
     const now = new Date();
 

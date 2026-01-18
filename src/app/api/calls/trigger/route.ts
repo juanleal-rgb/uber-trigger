@@ -196,6 +196,11 @@ Did you get a chance to see my previous email? Would you be open to a quick call
         body: JSON.stringify({
           phone_number: data.telefono.trim(),
           ...(appUrl ? { callback_url: `${appUrl.replace(/\/$/, "")}/api/calls/callback` } : {}),
+          // Legacy fields for workflows expecting metadata.*
+          metadata: {
+            callId: call.id,
+            nombreAlumno: data.nombreAlumno.trim(),
+          },
           context: workflowContext,
         }),
       });
